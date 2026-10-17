@@ -5,7 +5,6 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from dotenv import load_dotenv
-import logging
 load_dotenv()
 #define models
 embeddings = HuggingFaceEmbeddings(
@@ -19,7 +18,7 @@ docs = loader.load()
 
 #text splitter 
 splitter = RecursiveCharacterTextSplitter( 
-    chunk_size=200,
+    chunk_size=400,
     chunk_overlap=20,
     separators=["\n\n", "\n", " "])
 chunks = splitter.split_documents(docs)
@@ -29,13 +28,6 @@ vector_store = FAISS.from_documents(
 documents= chunks,
 embedding=embeddings
 )
-
-
-logging.basicConfig(level=logging.INFO)
-
-logging.getLogger(
-    "langchain_classic.retrievers.multi_query"
-).setLevel(logging.INFO)
 
 #retreive
 similarity_search = vector_store.as_retriever(search_type = 'similarity',search_kwargs={"k":5})
